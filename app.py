@@ -40,21 +40,22 @@ def parse():
 @oauth2.required(scopes=["https://www.googleapis.com/auth/drive.readonly"])
 def convert(file_id):
     url = "https://docs.google.com/document/d/{}".format(file_id)
-    service = apiclient.discovery.build('drive', 'v3', http=oauth2.http())
-    mime = 'application/vnd.oasis.opendocument.text'
-    #pylint: disable=no-member
-    request = service.files().export_media(fileId=file_id,
-                                           mimeType=mime)
 
     try:
+        service = apiclient.discovery.build('drive', 'v3', http=oauth2.http())
+
         title = service.files().get(
             fileId=file_id, fields="name").execute()['name']
+
+        mime = 'application/vnd.oasis.opendocument.text'
+        #pylint: disable=no-member
+        request = service.files().export_media(fileId=file_id,
+                                               mimeType=mime)
         fh = io.BytesIO()
         downloader = apiclient.http.MediaIoBaseDownload(fh, request)
         done = False
         while done is False:
             status, done = downloader.next_chunk()
-            print("Download {}".format(status))
 
         fh.seek(0)
 
