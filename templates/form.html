@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+
+<head>
+    <title>Google Docs HTML cleaner</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div class="container">
+        <h1>Google Docs HTML cleaner</h1>
+
+        <p>I write stuff for the web in Google Docs all the time. The
+        collaboration features are good, but the HTML export is awful. This
+        is my attempt to fix it. Stick a URL for a document in, and it'll
+        turn it into neat HTML. The first time, you'll be asked to
+        authenticate with your Google account. Your account details are only
+        stored on your browser.</p>
+
+        <form action="{{ url_for('parse') }}" method="post">
+            <label for="url">Google Docs URL</label>
+            <input type="url" name="url" value="{{ url }}" size="90" />
+            <input type="submit" value="Convert" />
+            {% if error %}
+                <p class="error">{{ error }}</p>
+            {% endif %}
+        </form>
+
+        {% if user %}
+            <p>Signed in as {{ user }} - <a href="{{ url_for('logout') }}">sign out?</a></p>
+        {% endif %}
+
+        {% if title %}
+            <h2>{{ title }}</h2>
+        {% endif %}
+
+        {% if document %}
+            <textarea cols="80" rows="40" onclick="this.focus();this.select()" readonly="readonly">{{ document }}</textarea>
+        {% endif %}
+    </div>
+</body>
+
+</html>
